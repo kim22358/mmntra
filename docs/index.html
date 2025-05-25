@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flow of a Falling Film Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Track';
+      src: url('assets/fonts/track/track.otf') format('opentype');
+    }
+
+    .font-track { font-family: 'Track', sans-serif; }
+    .font-source { font-family: 'Source Sans Pro', sans-serif; }
+
+    /* Custom Animations */
+    @keyframes fade-in-left {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fade-in-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes zoom-out {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+    }
+
+    .animate-fade-in-left {
+      animation: fade-in-left 0.8s ease-out forwards;
+    }
+
+    .animate-fade-in-up {
+      animation: fade-in-up 0.8s ease-out forwards;
+    }
+
+    .animate-zoom-out {
+      animation: zoom-out 0.6s ease-in forwards;
+    }
+
+    .delay-200 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-500 {
+      animation-delay: 0.5s;
+    }
+  </style>
+</head>
+
+<body class="h-screen w-screen bg-cover bg-center text-white overflow-hidden" style="background-image: url('assets/images/bg.png');">
+
+  <div class="h-full flex items-center px-6">
+    <div id="landing-content" class="flex flex-col items-start space-y-10 ml-[5vw] max-w-[40rem]">
+
+      <!-- Logo and WAVE -->
+      <div class="flex items-center gap-x-2 opacity-0 animate-fade-in-left">
+        <img src="assets/images/logo high res.png" alt="Logo" class="w-9 h-9 object-cover rounded-md" />
+        <span class="font-track text-white text-[2.00rem] leading-[2.00rem] tracking-wide">WAVE</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-[3rem] sm:text-[3.5rem] leading-tight font-bold text-pink-400 opacity-0 animate-fade-in-up delay-200">
+        Flow of a Falling Film<br />Calculator
+      </h1>
+
+      <!-- Animated Button -->
+      <button onclick="startTransition()" class="opacity-0 animate-fade-in-up delay-500 px-10 py-3 bg-transparent border-2 border-white text-white text-lg font-source font-bold rounded-full hover:bg-white hover:text-black transition">
+        Get Started →
+      </button>
+
+    </div>
+  </div>
+
+  <script>
+    function startTransition() {
+      const content = document.getElementById('landing-content');
+      content.classList.add('animate-zoom-out');
+      setTimeout(() => {
+        window.location.href = 'calc.html';
+      }, 600); // Matches zoom-out duration
+    }
+  </script>
+
+</body>
+</html>
