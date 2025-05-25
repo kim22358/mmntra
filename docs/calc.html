@@ -180,7 +180,11 @@
         <button onclick="calculate()"
    class="w-full py-3 bg-gradient-to-r from-blue-900 to-purple-600 text-white font-extrabold rounded-full shadow-md hover:from-blue-500 hover:to-purple-300 hover:shadow-lg transition duration-200 ease-in-out">
   CALCULATE
+<button onclick="alert('Fluid suggestions are based on maximizing the heat transfer coefficient (h) using fluid properties and flow dynamics.')" 
+  class="mt-2 text-xs text-white underline hover:text-pink-200">
+  How are fluids recommended?
 </button>
+
 
  <br/>
 
@@ -194,6 +198,33 @@
     <p class="text-xs text-white">HEAT TRANSFER RATE (W)</p>
     <p id="hTRate" class="text-cyan-300 font-bold text-lg">-</p>
   </div>
+  <!-- Smart Recommendations -->
+<div id="recommendations" class="hidden space-y-4 mt-6">
+  <h2 class="text-lg font-bold text-pink-400">Smart Recommendations</h2>
+  <div id="fluidSuggestion" class="text-sm text-white"></div>
+  <div id="wallTempSuggestion" class="text-sm text-white"></div>
+  <div id="flowrateSuggestion" class="text-sm text-white"></div>
+</div>
+
+  <script>
+    // Smart Recommendations
+    const fluid = document.getElementById("fluid");
+    const fluidSuggestion = document.getElementById("fluidSuggestion");
+    const wallTempSuggestion = document.getElementById("wallTempSuggestion");
+    const flowrateSuggestion = document.getElementById("flowrateSuggestion");
+
+    fluid.addEventListener("change", () => {
+      if (fluid.value) {
+        fluidSuggestion.textContent = `Recommended Fluid: ${fluid.value}`;
+        wallTempSuggestion.textContent = "Recommended Wall Temperature: 300 K";
+        flowrateSuggestion.textContent = "Recommended Flowrate: 0.1 kg/s·m";
+      } else {
+        fluidSuggestion.textContent = "";
+        wallTempSuggestion.textContent = "";
+        flowrateSuggestion.textContent = "";
+      }
+    });
+  </script>
 </div>
 
 <!-- New Clear All Button -->
@@ -201,36 +232,98 @@
   class="w-full py-2 mt-2 rounded-full font-bold text-sm text-white bg-gradient-to-r from-pink-900 to-fuchsia-200 shadow-md hover:from-red-400 hover:to-pink-300 transition duration-200 ease-in-out">
   CLEAR ALL
 </button>
+<br/>
+<body class="p-4">
 
+  <!-- Input fields -->
+<div class="max-w-xl mx-auto space-y-4">
+  <div>
+    <label class="text-sm">FLUID TEMPERATURE (K)</label>
+    <input id="temperature" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">PRESSURE (Pa)</label>
+    <input id="pressure" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">LENGTH (m)</label>
+    <input id="length" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">VELOCITY (m/s)</label>
+    <input id="velocity" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">REYNOLDS NUMBER</label>
+    <input id="reynolds" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+
+  <!-- Button to show alerts -->
+  <button onclick="showAlerts()"
+    class="w-full py-2 mt-2 rounded-full font-bold text-sm text-white bg-gradient-to-r from-orange-300 to-red-600 shadow-md hover:from-red-400 hover:to-pink-300 transition duration-200 ease-in-out">
+    Check Safety Alerts
+  </button>
+
+  <!-- Alerts will appear here -->
+  <div id="alertsContainer" class="mt-4"></div>
+</div>
+
+<!-- Script section -->
+<script>
+  function showAlerts() {
+    const temperature = parseFloat(document.getElementById('temperature').value) || 0;
+    const pressure = parseFloat(document.getElementById('pressure').value) || 0;
+    const velocity = parseFloat(document.getElementById('velocity').value) || 0;
+    const reynolds = parseFloat(document.getElementById('reynolds').value) || 0;
+
+    const calculatedValues = { temperature, pressure, velocity, reynolds };
+    localStorage.setItem('calculatedValues', JSON.stringify(calculatedValues));
+
+    // Generate the alert message based on values
+    let alerts = '';
+    if (temperature > 100) alerts += '<p>⚠️ High Temperature!</p>';
+    if (pressure > 200) alerts += '<p>⚠️ Excessive Pressure!</p>';
+    if (velocity > 50) alerts += '<p>⚠️ Dangerous Velocity!</p>';
+    if (reynolds > 4000) alerts += '<p>⚠️ Turbulent Flow (High Reynolds Number)!</p>';
+    if (alerts === '') alerts = '<p>✅ All systems are safe.</p>';
+
+    // Display the alerts
+    document.getElementById('alertsContainer').innerHTML = `
+      <div class="p-4 bg-red-100 text-red-800 rounded-xl font-medium space-y-2">
+        ${alerts}
+      </div>
+    `;
+  }
+</script>
 
   <script>
-    const fluidProps = {
-      Acetone: { cp: 2160, rho: 790, mu: 0.00032, k: 0.16 },
-      Air: { cp: 1005, rho: 1.225, mu: 0.0000181, k: 0.0262 },
-      Ammonia: { cp: 2060, rho: 682, mu: 0.00098, k: 0.51 },
-      Benzene: { cp: 1724, rho: 876, mu: 0.000604, k: 0.15 },
-      CarbonDioxide: { cp: 846, rho: 1.977, mu: 0.0000147, k: 0.0146 },
-      CarbonTetrachloride: { cp: 855, rho: 1590, mu: 0.0009, k: 0.105 },
-      Chloroform: { cp: 956, rho: 1489, mu: 0.00054, k: 0.148 },
-      Ethanol: { cp: 2450, rho: 789, mu: 0.0012, k: 0.171 },
-      EthyleneGlycol: { cp: 2415, rho: 1113, mu: 0.0161, k: 0.252 },
-      Glycerin: { cp: 2400, rho: 1260, mu: 1.49, k: 0.28 },
-      Helium: { cp: 5190, rho: 0.1786, mu: 0.000019, k: 0.1513 },
-      Hydrogen: { cp: 14300, rho: 0.0899, mu: 0.0000089, k: 0.1805 },
-      Isopropanol: { cp: 2560, rho: 786, mu: 0.002, k: 0.13 },
-      Kerosene: { cp: 2100, rho: 780, mu: 0.00164, k: 0.13 },
-      Methanol: { cp: 2540, rho: 792, mu: 0.00059, k: 0.21 },
-      Nitrogen: { cp: 1040, rho: 1.251, mu: 0.0000179, k: 0.0258 },
-      Octane: { cp: 2220, rho: 703, mu: 0.0005, k: 0.15 },
-      Oil: { cp: 2000, rho: 800, mu: 0.05, k: 0.15 },
-      Oxygen: { cp: 918, rho: 1.429, mu: 0.0000202, k: 0.0263 },
-      PropyleneGlycol: { cp: 2400, rho: 1036, mu: 0.058, k: 0.22 },
-      Steam: { cp: 2010, rho: 0.6, mu: 0.000013, k: 0.0184 },
-      SulfurDioxide: { cp: 622, rho: 1.43, mu: 0.000013, k: 0.015 },
-      Toluene: { cp: 1700, rho: 867, mu: 0.00059, k: 0.13 },
-      Water: { cp: 4200, rho: 997, mu: 0.001, k: 0.6 },
-      Xylene: { cp: 1700, rho: 860, mu: 0.00061, k: 0.15 },
-    };
+      const fluidProps = {
+        Acetone: { cp: 2160, rho: 790, mu: 0.00032, k: 0.16 },
+        Air: { cp: 1005, rho: 1.225, mu: 0.0000181, k: 0.0262 },
+        Ammonia: { cp: 2060, rho: 682, mu: 0.00098, k: 0.51 },
+        Benzene: { cp: 1724, rho: 876, mu: 0.000604, k: 0.15 },
+        CarbonDioxide: { cp: 846, rho: 1.977, mu: 0.0000147, k: 0.0146 },
+        CarbonTetrachloride: { cp: 855, rho: 1590, mu: 0.0009, k: 0.105 },
+        Chloroform: { cp: 956, rho: 1489, mu: 0.00054, k: 0.148 },
+        Ethanol: { cp: 2450, rho: 789, mu: 0.0012, k: 0.171 },
+        EthyleneGlycol: { cp: 2415, rho: 1113, mu: 0.0161, k: 0.252 },
+        Glycerin: { cp: 2400, rho: 1260, mu: 1.49, k: 0.28 },
+        Helium: { cp: 5190, rho: 0.1786, mu: 0.000019, k: 0.1513 },
+        Hydrogen: { cp: 14300, rho: 0.0899, mu: 0.0000089, k: 0.1805 },
+        Isopropanol: { cp: 2560, rho: 786, mu: 0.002, k: 0.13 },
+        Kerosene: { cp: 2100, rho: 780, mu: 0.00164, k: 0.13 },
+        Methanol: { cp: 2540, rho: 792, mu: 0.00059, k: 0.21 },
+        Nitrogen: { cp: 1040, rho: 1.251, mu: 0.0000179, k: 0.0258 },
+        Octane: { cp: 2220, rho: 703, mu: 0.0005, k: 0.15 },
+        Oil: { cp: 2000, rho: 800, mu: 0.05, k: 0.15 },
+        Oxygen: { cp: 918, rho: 1.429, mu: 0.0000202, k: 0.0263 },
+        PropyleneGlycol: { cp: 2400, rho: 1036, mu: 0.058, k: 0.22 },
+        Steam: { cp: 2010, rho: 0.6, mu: 0.000013, k: 0.0184 },
+        SulfurDioxide: { cp: 622, rho: 1.43, mu: 0.000013, k: 0.015 },
+        Toluene: { cp: 1700, rho: 867, mu: 0.00059, k: 0.13 },
+        Water: { cp: 4200, rho: 997, mu: 0.001, k: 0.6 },
+        Xylene: { cp: 1700, rho: 860, mu: 0.00061, k: 0.15 },
+      };
 
 
    function calculate() {
@@ -259,6 +352,40 @@
   document.getElementById("hTRate").textContent = hTR.toFixed(6);
   document.getElementById("results").classList.remove("hidden");
 
+  // Recommend best fluid for highest heat transfer coefficient
+let bestFluid = null;
+let bestH = 0;
+
+Object.entries(fluidProps).forEach(([name, p]) => {
+  const v = flow / (p.rho * film);
+  const ReTest = (p.rho * v * length) / p.mu;
+  const PrTest = (p.cp * p.mu) / p.k;
+
+  let NuTest;
+  if (ReTest < 1000) NuTest = 0.664 * Math.sqrt(ReTest) * Math.cbrt(PrTest);
+  else if (ReTest <= 5000) NuTest = 0.023 * Math.pow(ReTest, 0.8) * Math.cbrt(PrTest);
+  else NuTest = 0.027 * Math.pow(ReTest, 0.8) * Math.cbrt(PrTest);
+
+  const hTest = (NuTest * p.k) / length;
+  if (hTest > bestH) {
+    bestH = hTest;
+    bestFluid = name;
+  }
+});
+
+// Recommend ideal wall temperature difference for optimal Q (~ within safe high efficiency)
+let recommendedTempDiff = Math.min(50, tempDiff * 1.2); // Maximize to a safe 20% higher
+
+// Recommend a slightly increased flowrate (if within practical range)
+let recommendedFlow = flow * 1.1;
+
+document.getElementById("fluidSuggestion").textContent = `✅ Best Fluid for Heat Transfer: ${bestFluid} (h ≈ ${bestH.toFixed(2)} W/m²·K)`;
+document.getElementById("wallTempSuggestion").textContent = `🌡️ Try increasing ΔT to around ${recommendedTempDiff.toFixed(1)} K for better efficiency.`;
+document.getElementById("flowrateSuggestion").textContent = `💧 A flowrate of ≈ ${recommendedFlow.toFixed(2)} kg/s·m might improve heat transfer rate.`;
+
+document.getElementById("recommendations").classList.remove("hidden");
+  
+
   // Save to localStorage (inside calculate)
   const entry = {
     fluid,
@@ -276,8 +403,11 @@
 function clearAll() {
   ["fluid", "flowrate", "temp", "film", "length", "k"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("results").classList.add("hidden");
+  document.getElementById("recommendations").classList.add("hidden");
 }
 
   </script>
+
+
 </body>
 </html>
