@@ -159,36 +159,65 @@
 
 
 
-    <!-- Custom Dropdown Arrow -->
-    <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-gray-700">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
+   <!-- Centered Dropdown with Custom Arrow -->
+<div class="relative w-60 mx-auto mt-8">
+  <select id="operationType" class="block w-full appearance-none text-center bg-white text-gray-800 font-semibold rounded-full bg-opacity-80 py-3 pl-6 pr-10 shadow-md focus:outline-none focus:ring-2 focus:ring-violet-900 focus:border-violet-900 transition duration-200">
+    <option value="heating">Heating</option>
+    <option value="cooling">Cooling</option>
+    <option value="evaporation">Evaporation</option>
+    <option value="condensation">Condensation</option>
+  </select>
+  <!-- Custom Arrow -->
+  <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center to-black">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 9l-7 7-7-7" />
+    </svg>
   </div>
 </div>
 
-      <!-- Inputs -->
-      <div class="max-w-xl mx-auto space-y-4">
-        <div><label class="text-sm">FILM THICKNESS (m)</label><input id="film" type="number" class="w-full p-2 rounded-2xl bg-white/10" /></div>
-        <div><label class="text-sm">FLOWRATE PER UNIT WIDTH (kg/s·m)</label><input id="flowrate" type="number" class="w-full p-2 rounded-2xl bg-white/10" /></div>
-        <div><label class="text-sm">LENGTH (m)</label><input id="length" type="number" class="w-full p-2 rounded-2xl bg-white/10" /></div>
-        <div><label class="text-sm">TEMPERATURE DIFFERENCE (K)</label><input id="temp" type="number" class="w-full p-2 rounded-2xl bg-white/10" /></div>
-        <div><label class="text-sm">THERMAL CONDUCTIVITY (W/m·K)</label><input id="k" type="number" class="w-full p-2 rounded-2xl bg-white/10" /></div>
- <br/>
-        <button onclick="calculate()"
-   class="w-full py-3 bg-gradient-to-r from-blue-900 to-purple-600 text-white font-extrabold rounded-full shadow-md hover:from-blue-500 hover:to-purple-300 hover:shadow-lg transition duration-200 ease-in-out">
+<br />
+
+<!-- Inputs -->
+<div class="max-w-xl mx-auto space-y-4">
+  <div>
+    <label class="text-sm">FILM THICKNESS (m)</label>
+    <input id="film" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">FLOWRATE PER UNIT WIDTH (kg/s·m)</label>
+    <input id="flowrate" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">LENGTH (m)</label>
+    <input id="length" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">TEMPERATURE DIFFERENCE (K)</label>
+    <input id="temp" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+  <div>
+    <label class="text-sm">THERMAL CONDUCTIVITY (W/m·K)</label>
+    <input id="k" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
+  </div>
+</div>
+
+<br />
+
+<!-- Buttons -->
+<button onclick="calculate()"
+  class="w-full py-3 bg-gradient-to-r from-blue-900 to-purple-600 text-white font-extrabold rounded-full shadow-md hover:from-blue-500 hover:to-purple-300 hover:shadow-lg transition duration-200 ease-in-out">
   CALCULATE
-<button onclick="alert('Fluid suggestions are based on maximizing the heat transfer coefficient (h) using fluid properties and flow dynamics.')" 
+</button>
+
+<button onclick="alert('Fluid suggestions are based on maximizing the heat transfer coefficient (h) using fluid properties and flow dynamics.')"
   class="mt-2 text-xs text-white underline hover:text-pink-200">
   How are fluids recommended?
 </button>
 
+<br />
 
- <br/>
-
-       <!-- Outputs -->
+<!-- Outputs -->
 <div id="results" class="hidden space-y-4 mt-4">
   <div class="bg-gradient-to-r from-purple-700 to-purple-400 p-4 rounded-xl border border-white/30 shadow-md">
     <p class="text-xs text-white">HEAT TRANSFER COEFFICIENT (W/m²·K)</p>
@@ -198,34 +227,69 @@
     <p class="text-xs text-white">HEAT TRANSFER RATE (W)</p>
     <p id="hTRate" class="text-cyan-300 font-bold text-lg">-</p>
   </div>
+  <div class="bg-gradient-to-r from-purple-700 to-purple-400 p-4 rounded-xl border border-white/30 shadow-md">
+    <p class="text-xs text-white">REYNOLDS NUMBER</p>
+    <p id="Re" class="text-cyan-300 font-bold text-lg">-</p>
+  </div>
+  <div class="bg-gradient-to-r from-purple-700 to-purple-400 p-4 rounded-xl border border-white/30 shadow-md">
+    <p class="text-xs text-white">PRANDTL NUMBER</p>
+    <p id="Pr" class="text-cyan-300 font-bold text-lg">-</p>
+  </div>
+
   <!-- Smart Recommendations -->
-<div id="recommendations" class="hidden space-y-4 mt-6">
-  <h2 class="text-lg font-bold text-pink-400">Smart Recommendations</h2>
-  <div id="fluidSuggestion" class="text-sm text-white"></div>
-  <div id="wallTempSuggestion" class="text-sm text-white"></div>
-  <div id="flowrateSuggestion" class="text-sm text-white"></div>
+  <div id="recommendations" class="hidden space-y-4 mt-6">
+    <h2 class="text-lg font-bold text-pink-400">Smart Recommendations</h2>
+    <div id="fluidSuggestion" class="text-sm text-white"></div>
+    <div id="wallTempSuggestion" class="text-sm text-white"></div>
+    <div id="flowrateSuggestion" class="text-sm text-white"></div>
+  </div>
 </div>
 
-  <script>
-    // Smart Recommendations
-    const fluid = document.getElementById("fluid");
-    const fluidSuggestion = document.getElementById("fluidSuggestion");
-    const wallTempSuggestion = document.getElementById("wallTempSuggestion");
-    const flowrateSuggestion = document.getElementById("flowrateSuggestion");
+<!-- JS Logic -->
+<script>
+  function calculate() {
+    const tempDiff = parseFloat(document.getElementById("temp").value);
+    const flow = parseFloat(document.getElementById("flowrate").value);
+    const processGoal = document.getElementById("operationType").value;
+    const bestFluid = "Water"; // Replace with your logic
+    const bestH = 300; // Replace with your calculated value
 
-    fluid.addEventListener("change", () => {
-      if (fluid.value) {
-        fluidSuggestion.textContent = `Recommended Fluid: ${fluid.value}`;
-        wallTempSuggestion.textContent = "Recommended Wall Temperature: 300 K";
-        flowrateSuggestion.textContent = "Recommended Flowrate: 0.1 kg/s·m";
-      } else {
-        fluidSuggestion.textContent = "";
-        wallTempSuggestion.textContent = "";
-        flowrateSuggestion.textContent = "";
-      }
-    });
-  </script>
-</div>
+    let recommendedTempDiff;
+    let recommendedFlow;
+
+    switch (processGoal.toLowerCase()) {
+      case "heating":
+        recommendedTempDiff = Math.min(60, tempDiff * 1.25);
+        recommendedFlow = flow * 1.1;
+        break;
+      case "cooling":
+        recommendedTempDiff = Math.min(50, tempDiff * 1.2);
+        recommendedFlow = flow * 1.15;
+        break;
+      case "evaporation":
+        recommendedTempDiff = Math.min(80, tempDiff * 1.3);
+        recommendedFlow = flow * 1.05;
+        break;
+      case "condensation":
+        recommendedTempDiff = Math.min(30, tempDiff * 1.1);
+        recommendedFlow = flow * 1.2;
+        break;
+      default:
+        recommendedTempDiff = Math.min(50, tempDiff * 1.2);
+        recommendedFlow = flow * 1.1;
+    }
+
+    document.getElementById("wallTempSuggestion").textContent =
+      `🌡️ For ${processGoal}, consider targeting ΔT ≈ ${recommendedTempDiff.toFixed(1)} K.`;
+
+    document.getElementById("flowrateSuggestion").textContent =
+      `💧 A flowrate of ≈ ${recommendedFlow.toFixed(2)} kg/s·m may improve performance for ${processGoal}.`;
+
+    document.getElementById("recommendations").classList.remove("hidden");
+    document.getElementById("results").classList.remove("hidden");
+  }
+</script>
+
 
 <!-- New Clear All Button -->
 <button onclick="clearAll()" 
@@ -234,8 +298,11 @@
 </button>
 <br/>
 <body class="p-4">
-
-  <!-- Input fields -->
+<br/>
+<label class="text-sm justify-center">_______________________________________________________________________________</label>
+<br/>
+<br/>
+ <!-- Input fields -->
 <div class="max-w-xl mx-auto space-y-4">
   <div>
     <label class="text-sm">FLUID TEMPERATURE (K)</label>
@@ -257,18 +324,19 @@
     <label class="text-sm">REYNOLDS NUMBER</label>
     <input id="reynolds" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
   </div>
-
-  <!-- Button to show alerts -->
-  <button onclick="showAlerts()"
-    class="w-full py-2 mt-2 rounded-full font-bold text-sm text-white bg-gradient-to-r from-orange-300 to-red-600 shadow-md hover:from-red-400 hover:to-pink-300 transition duration-200 ease-in-out">
-    Check Safety Alerts
-  </button>
-
-  <!-- Alerts will appear here -->
-  <div id="alertsContainer" class="mt-4"></div>
 </div>
 
-<!-- Script section -->
+<br />
+
+<!-- Button to check alerts -->
+<button onclick="showAlerts()"
+  class="w-full py-2 mt-2 rounded-full font-bold text-sm text-white bg-gradient-to-r from-orange-300 to-red-600 shadow-md hover:from-red-400 hover:to-pink-300 transition duration-200 ease-in-out">
+  Check Safety Alerts
+</button>
+
+<!-- Container for the alerts -->
+<div id="alertsContainer" class="max-w-xl mx-auto mt-4 text-sm text-white space-y-2"></div>
+
 <script>
   function showAlerts() {
     const temperature = parseFloat(document.getElementById('temperature').value) || 0;
@@ -279,22 +347,48 @@
     const calculatedValues = { temperature, pressure, velocity, reynolds };
     localStorage.setItem('calculatedValues', JSON.stringify(calculatedValues));
 
-    // Generate the alert message based on values
     let alerts = '';
-    if (temperature > 100) alerts += '<p>⚠️ High Temperature!</p>';
-    if (pressure > 200) alerts += '<p>⚠️ Excessive Pressure!</p>';
-    if (velocity > 50) alerts += '<p>⚠️ Dangerous Velocity!</p>';
-    if (reynolds > 4000) alerts += '<p>⚠️ Turbulent Flow (High Reynolds Number)!</p>';
-    if (alerts === '') alerts = '<p>✅ All systems are safe.</p>';
 
-    // Display the alerts
+    // Temperature checks (in Kelvin)
+    if (temperature > 393.15) { // 120°C
+      alerts += '<p>⚠️ High Temperature! Use heat-resistant materials or cooling systems.</p>';
+    } else if (temperature < 273.15) { // 0°C
+      alerts += '<p>⚠️ Sub-zero Temperature! Apply antifreeze measures or insulation.</p>';
+    }
+
+    // Pressure checks
+    if (pressure > 2000000) {
+      alerts += '<p>⚠️ Very High Pressure! Exceeds standard industrial design. Reinforced equipment and relief valves required.</p>';
+    } else if (pressure > 500000) {
+      alerts += '<p>⚠️ High Pressure! Ensure all components are rated above 5 bar (500,000 Pa).</p>';
+    } else if (pressure < 90000) {
+      alerts += '<p>⚠️ Low Pressure or Vacuum Condition. Verify system is suitable for negative or low pressures.</p>';
+    }
+
+    // Velocity checks
+    if (velocity > 30) {
+      alerts += '<p>⚠️ Excessive Flow Velocity! May cause erosion or pressure drop issues.</p>';
+    } else if (velocity < 0.3) {
+      alerts += '<p>⚠️ Low Flow Velocity. Risk of sediment buildup or poor transport efficiency.</p>';
+    }
+
+    // Reynolds number checks
+    if (reynolds > 4000) {
+      alerts += '<p>⚠️ Turbulent Flow (Re > 4000). Check for erosion and vibration.</p>';
+    } else if (reynolds < 2000) {
+      alerts += '<p>⚠️ Laminar Flow (Re < 2000). May affect heat and mass transfer.</p>';
+    }
+
+    if (alerts === '') {
+      alerts = '<p>✅ All system parameters are within safe industrial design limits.</p>';
+    }
+
     document.getElementById('alertsContainer').innerHTML = `
-      <div class="p-4 bg-red-100 text-red-800 rounded-xl font-medium space-y-2">
-        ${alerts}
-      </div>
+      <div class="p-4 rounded-xl bg-white/10 border border-white/20">${alerts}</div>
     `;
   }
 </script>
+
 
   <script>
       const fluidProps = {
@@ -350,6 +444,8 @@
 
   document.getElementById("hTCoff").textContent = hTC.toFixed(6);
   document.getElementById("hTRate").textContent = hTR.toFixed(6);
+  document.getElementById("Re").textContent = Re.toFixed(2);
+  document.getElementById("Pr").textContent = Pr.toFixed(2);
   document.getElementById("results").classList.remove("hidden");
 
   // Recommend best fluid for highest heat transfer coefficient
@@ -379,7 +475,6 @@ let recommendedTempDiff = Math.min(50, tempDiff * 1.2); // Maximize to a safe 20
 // Recommend a slightly increased flowrate (if within practical range)
 let recommendedFlow = flow * 1.1;
 
-document.getElementById("fluidSuggestion").textContent = `✅ Best Fluid for Heat Transfer: ${bestFluid} (h ≈ ${bestH.toFixed(2)} W/m²·K)`;
 document.getElementById("wallTempSuggestion").textContent = `🌡️ Try increasing ΔT to around ${recommendedTempDiff.toFixed(1)} K for better efficiency.`;
 document.getElementById("flowrateSuggestion").textContent = `💧 A flowrate of ≈ ${recommendedFlow.toFixed(2)} kg/s·m might improve heat transfer rate.`;
 
