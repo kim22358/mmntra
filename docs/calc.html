@@ -305,7 +305,7 @@
     <input id="temperature" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
   </div>
   <div>
-    <label class="text-sm">PRESSURE (Pa)</label>
+    <label class="text-sm">GAUGE PRESSURE (Pa)</label>
     <input id="pressure" type="number" class="w-full p-2 rounded-2xl bg-white/10" />
   </div>
   <div>
@@ -336,23 +336,33 @@
 <script>
   function showAlerts() {
     const temperature = parseFloat(document.getElementById('temperature').value) || 0;
-    const pressure = parseFloat(document.getElementById('pressure').value) || 0;
+    const pressureGauge = parseFloat(document.getElementById('pressure').value) || 0;
     const velocity = parseFloat(document.getElementById('velocity').value) || 0;
     const reynolds = parseFloat(document.getElementById('reynolds').value) || 0;
 
-    const calculatedValues = { temperature, pressure, velocity, reynolds };
+       // Convert gauge pressure to absolute pressure
+    const atmosphericPressure = 101325; // Pa
+    const absolutePressure = pressureGauge + atmosphericPressure;
+
+    const calculatedValues = {
+      temperature,
+      pressureGauge,
+      absolutePressure,
+      velocity,
+      reynolds
+    };
     localStorage.setItem('calculatedValues', JSON.stringify(calculatedValues));
 
     let alerts = '';
 
     // Temperature checks (in Kelvin)
-    if (temperature > 393.15) { // 120°C
+    if (temperature > 393.15) {
       alerts += '<p>⚠️ High Temperature! Use heat-resistant materials or cooling systems.</p>';
-    } else if (temperature < 273.15) { // 0°C
+    } else if (temperature < 273.15) {
       alerts += '<p>⚠️ Sub-zero Temperature! Apply antifreeze measures or insulation.</p>';
     }
 
-    // Pressure checks
+    // Absolute Pressure checks
     if (pressure > 2000000) {
       alerts += '<p>⚠️ Very High Pressure! Exceeds standard industrial design. Reinforced equipment and relief valves required.</p>';
     } else if (pressure > 500000) {
@@ -384,7 +394,6 @@
     `;
   }
 </script>
-
 
   <script>
       const fluidProps = {
